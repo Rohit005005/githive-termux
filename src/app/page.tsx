@@ -27,22 +27,19 @@ const LandingPage = () => {
             analysis for every commit and explore your codebase like never
             before.
           </p>
-          <div className="flex items-center gap-4">
+          <div className="flex-col flex items-center gap-1">
             <Link href="/dashboard">
               <Button
                 size="lg"
-                className="bg-green-500 text-lg px-8 text-white transition-all duration-300 hover:scale-105 hover:bg-green-600 hover:shadow-lg hover:shadow-green-500/20"
+                className="bg-green-500 px-8 text-lg text-white transition-all duration-300 hover:scale-105 hover:bg-green-600 hover:shadow-lg hover:shadow-green-500/20"
               >
                 Get Started for Free
               </Button>
             </Link>
             <Link href="/dashboard">
-              <Button
-                size="lg"
-                className="animate-fade-in animate-fill-forwards px-8 text-lg  opacity-0 transition-all duration-300 [animation-delay:800ms] hover:scale-105 hover:bg-green-500 hover:shadow-lg hover:shadow-green-500/20 hover:text-white"
-              >
+              <p className="animate-fade-in animate-fill-forwards text-sm opacity-0 transition-all duration-300 [animation-delay:800ms] hover:scale-105 text-gray-400">
                 Connect GitHub Repository
-              </Button>
+              </p>
             </Link>
           </div>
 
