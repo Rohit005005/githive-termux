@@ -175,7 +175,7 @@ const AskQuestionCard = () => {
             <div className="flex items-center justify-start">
               <Button type="submit" className="px-2 sm:px-3" disabled={loading}>
                 Ask GitHive
-                {!loading && <LoaderIcon className="animate-spin text-white" />}
+                {loading && <LoaderIcon className="animate-spin text-white" />}
               </Button>
               <Button
                 className="ml-3 px-2 sm:px-3"
@@ -186,7 +186,7 @@ const AskQuestionCard = () => {
                 }}
               >
                 Summarize Repo
-                {!loading && <LoaderIcon className="animate-spin text-white" />}
+                {loading && <LoaderIcon className="animate-spin text-white" />}
               </Button>
             </div>
           </form>
