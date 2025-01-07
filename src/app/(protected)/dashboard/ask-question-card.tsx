@@ -63,8 +63,8 @@ const AskQuestionCard = () => {
   return (
     <>
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="scrollbar-webkit sm:max-h-[90vh] max-h-[75vh] sm:max-w-[80vw] max-w-[95vw] overflow-y-scroll border-gray-700 bg-gray-800 text-white">
-          <div className="flex items-center sm:gap-5 gap-2">
+        <DialogContent className="max-h-[75vh] max-w-[95vw] overflow-y-scroll border-gray-700 bg-gray-800 text-white scrollbar-webkit sm:max-h-[90vh] sm:max-w-[80vw]">
+          <div className="flex items-center gap-2 sm:gap-5">
             <DialogHeader>
               <DialogTitle className="flex flex-row items-center justify-center gap-2">
                 <Github className="animate-pulse-scale h-5 w-5 text-green-400" />
@@ -98,22 +98,22 @@ const AskQuestionCard = () => {
             >
               Save Answer
             </Button>
-            <div className="hidden sm:flex items-center gap-2 rounded-md border border-gray-500 px-2 py-1">
+            <div className="hidden items-center gap-2 rounded-md border border-gray-500 px-2 py-1 sm:flex">
               <Info size={20} />
               <p className="text-sm text-gray-400">
                 Answer will be added on the Saved Q&A Page
               </p>
             </div>
           </div>
-          <div className="flex sm:hidden items-center gap-2 rounded-md border border-gray-500 px-2 py-1">
-              <Info size={20} />
-              <p className="text-sm text-gray-400">
-                Answer will be added on the Saved Q&A Page
-              </p>
-            </div>
+          <div className="flex items-center gap-2 rounded-md border border-gray-500 px-2 py-1 sm:hidden">
+            <Info size={20} />
+            <p className="text-sm text-gray-400">
+              Answer will be added on the Saved Q&A Page
+            </p>
+          </div>
           <MDEditor.Markdown
             source={answer}
-            className=" p-5 rounded-md sm:max-w-[73vw]"
+            className="max-w-[80vw] rounded-md p-5 sm:max-w-[73vw]"
           />
           <div className="h-3"></div>
 
@@ -133,7 +133,7 @@ const AskQuestionCard = () => {
       </Dialog>
       {/*dialog for summary of repo */}
       <Dialog open={open2} onOpenChange={setOpen2}>
-        <DialogContent className="max-h-[75vh] sm:max-h-[90vh] max-w-[95vw] sm:max-w-[80vw] overflow-y-scroll scrollbar-webkit border-gray-700 bg-gray-800 text-white">
+        <DialogContent className="max-h-[75vh] max-w-[95vw] overflow-y-scroll border-gray-700 bg-gray-800 text-white scrollbar-webkit sm:max-h-[90vh] sm:max-w-[80vw]">
           <DialogHeader>
             <DialogTitle className="flex flex-row items-center">
               <Github className="animate-pulse-scale h-5 w-5 text-green-400" />
@@ -144,7 +144,7 @@ const AskQuestionCard = () => {
           </DialogHeader>
           <MDEditor.Markdown
             source={repositorySummary}
-            className="rounded-md p-5"
+            className="max-w-[80vw] rounded-md p-5 sm:max-w-[73vw]"
           />
           <Button
             type="button"
@@ -168,25 +168,27 @@ const AskQuestionCard = () => {
             <Textarea
               placeholder="Ask about any file in the repository. Ex: Which file should i edit to change the home page?"
               value={question}
-              className="font-medium text-sm sm:text-sm md:text-md text-gray-950 bg-gray-300"
+              className="md:text-md bg-gray-300 text-sm font-medium text-gray-950 sm:text-sm"
               onChange={(e) => setQuestion(e.target.value)}
             />
             <div className="h-4"></div>
-            <Button type="submit" disabled={loading}>
-              Ask GitHive
-              {loading&&<LoaderIcon className="animate-spin text-white"/>}
-            </Button>
-            <Button
-              className="ml-3"
-              disabled={loading}
-              type="button"
-              onClick={() => {
-                repoSummary();
-              }}
-            >
-              Summarize Repo
-              {loading&&<LoaderIcon className="animate-spin text-white"/>}
-            </Button>
+            <div className="flex items-center justify-start">
+              <Button type="submit" className="px-2 sm:px-3" disabled={loading}>
+                Ask GitHive
+                {!loading && <LoaderIcon className="animate-spin text-white" />}
+              </Button>
+              <Button
+                className="ml-3 px-2 sm:px-3"
+                disabled={loading}
+                type="button"
+                onClick={() => {
+                  repoSummary();
+                }}
+              >
+                Summarize Repo
+                {!loading && <LoaderIcon className="animate-spin text-white" />}
+              </Button>
+            </div>
           </form>
         </CardContent>
       </Card>
