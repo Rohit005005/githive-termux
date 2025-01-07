@@ -20,14 +20,15 @@ const CreatePage = () => {
 
   function onSubmit(data: FormInput) {
     const githubRegex = /^https?:\/\/(www\.)?github\.com\/[\w-]+\/[\w-]+\/?$/;
-    if (!githubRegex.test(data.repoUrl)){
-      toast.error("Invalid GitHub repository URL");
-      return
-    }
     if (data.repoUrl.endsWith(".git")) {
       toast.error(`Remove ".git" from the end of the URL !!`);
-      return
+      return;
     }
+    if (!githubRegex.test(data.repoUrl)) {
+      toast.error("Invalid GitHub repository URL");
+      return;
+    }
+
     createProject.mutate(
       {
         githubUrl: data.repoUrl,
@@ -49,11 +50,11 @@ const CreatePage = () => {
   }
 
   return (
-    <div className="flex flex-col sm:flex-row overflow-hidden h-full items-center justify-center gap-12">
+    <div className="flex h-full flex-col items-center justify-center gap-12 overflow-hidden sm:flex-row">
       <img src="/github.svg" className="h-56 w-auto"></img>
       <div>
         <div className="text-center sm:text-left">
-          <h1 className="text-2xl text-white font-semibold">
+          <h1 className="text-2xl font-semibold text-white">
             Link your github repository
           </h1>
           <p className="text-sm text-gray-400">
@@ -84,14 +85,21 @@ const CreatePage = () => {
               className="bg-gray-300 text-black"
             />
             <div className="h-4"></div>
-            <Button type="submit" className="flex items-center" disabled={createProject.isPending}>
+            <Button
+              type="submit"
+              className="flex items-center"
+              disabled={createProject.isPending}
+            >
               Create Project
-              {createProject.isPending&&<LoaderIcon className="animate-spin text-white"/>}
+              {createProject.isPending && (
+                <LoaderIcon className="animate-spin text-white" />
+              )}
             </Button>
-            <div className="flex items-center gap-2 rounded-md border border-gray-600 px-2 py-1 mt-2">
-              <Info size={20} className="text-gray-200"/>
+            <div className="mt-2 flex items-center gap-2 rounded-md border border-gray-600 px-2 py-1">
+              <Info size={20} className="text-gray-200" />
               <p className="text-sm text-gray-400">
-                Wait 5-10 minutes, depends on the size of repo. Works on free API
+                Wait 5-10 minutes, depends on the size of repo. Works on free
+                API
               </p>
             </div>
           </form>
