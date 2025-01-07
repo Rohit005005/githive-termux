@@ -1,6 +1,7 @@
 "use client";
 import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
 import { SignOutButton, UserButton, useUser } from "@clerk/nextjs";
+import Link from "next/link";
 import React from "react";
 
 const Header = () => {
@@ -17,9 +18,9 @@ const Header = () => {
         </p>
       </div>
       <div className="flex items-center gap-5 ">
-        <p className="rounded-md border border-gray-500 px-3 py-1 text-gray-300 text-sm hover:text-white">
+        <Link href={'/'} className="rounded-md border border-gray-500 px-3 py-1 text-gray-300 text-sm hover:text-white">
           <SignOutButton />
-        </p>
+        </Link>
         <UserButton />
       </div>
     </div>
