@@ -52,7 +52,7 @@ export async function askQuestion(question: string, projectId: string) {
             ${question}
             END OF QUESTION
             AI assistant will take into account any CONTENT BLOCK that is provided in a conversation.
-            If the context does not provide the answer to question. The AI assistant will say, "I'm sorry, but I don't know the answer !!".
+            If the context does not provide the answer to question. The AI assistant will say, "I'm sorry, but I don't know the answer !! Try specifying the file name".
             AI assistant will not apologize for previous reponses, but instead will indicate new information was gained.
             AI assistant will not invent anything that is not drawn directly from the context.
             Answer in markdown syntax, with code snippets if needed. Be as detailed as possible when answering.

@@ -4,9 +4,10 @@ import { Input } from "@/components/ui/input";
 import useRefetch from "@/hooks/use-refetch";
 import { api } from "@/trpc/react";
 import { Info, LoaderIcon } from "lucide-react";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+
 type FormInput = {
   repoUrl: string;
   projectName: string;
@@ -17,6 +18,25 @@ const CreatePage = () => {
   const { register, handleSubmit, reset } = useForm<FormInput>();
   const createProject = api.project.createProject.useMutation();
   const refetch = useRefetch();
+
+  const [isPending, setIsPending] = useState(false);
+
+  // On mount, set isPending from localStorage
+  useEffect(() => {
+    const pendingState = localStorage.getItem("createProjectPending") === "true";
+    setIsPending(pendingState);
+
+    // Optionally refetch to confirm operation is still pending (if API supports it)
+  }, []);
+
+  // Watch `isPending` state to update localStorage
+  useEffect(() => {
+    if (isPending) {
+      localStorage.setItem("createProjectPending", "true");
+    } else {
+      localStorage.removeItem("createProjectPending");
+    }
+  }, [isPending]);
 
   function onSubmit(data: FormInput) {
     const githubRegex = /^https?:\/\/(www\.)?github\.com\/[\w-]+\/[\w-]+\/?$/;
@@ -29,6 +49,8 @@ const CreatePage = () => {
       return;
     }
 
+    setIsPending(true);
+
     createProject.mutate(
       {
         githubUrl: data.repoUrl,
@@ -40,13 +62,14 @@ const CreatePage = () => {
           toast.success("Project created successfully");
           refetch();
           reset();
+          setIsPending(false);
         },
         onError: () => {
           toast.error("Failed to create project");
+          setIsPending(false);
         },
-      },
+      }
     );
-    return true;
   }
 
   return (
@@ -55,10 +78,10 @@ const CreatePage = () => {
       <div>
         <div className="text-center sm:text-left">
           <h1 className="text-2xl font-semibold text-white">
-            Link your github repository
+            Link your GitHub repository
           </h1>
           <p className="text-sm text-gray-400">
-            Enter the url of your repository to link it to GitHive
+            Enter the URL of your repository to link it to GitHive
           </p>
         </div>
         <div className="h-4"></div>
@@ -73,7 +96,7 @@ const CreatePage = () => {
             <div className="h-2"></div>
             <Input
               {...register("repoUrl", { required: true })}
-              placeholder="Repository Url"
+              placeholder="Repository URL"
               required
               type="url"
               className="bg-gray-300 text-black"
@@ -81,17 +104,17 @@ const CreatePage = () => {
             <div className="h-2"></div>
             <Input
               {...register("githubToken")}
-              placeholder="Github Token (Optional)"
+              placeholder="GitHub Token (Optional)"
               className="bg-gray-300 text-black"
             />
             <div className="h-4"></div>
             <Button
               type="submit"
               className="flex items-center"
-              disabled={createProject.isPending}
+              disabled={isPending || createProject.isPending}
             >
               Create Project
-              {createProject.isPending && (
+              {(isPending || createProject.isPending) && (
                 <LoaderIcon className="animate-spin text-white" />
               )}
             </Button>
