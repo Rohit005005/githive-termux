@@ -54,7 +54,7 @@ const CreatePage = () => {
     }
 
     setIsPending(true);
-    const privRepo=await checkPrivate(data.repoUrl,data.githubToken)
+    /*const privRepo=await checkPrivate(data.repoUrl,data.githubToken)
     if (privRepo) {
       toast.error("Can't link private repository !!");
       setIsPending(false);
@@ -66,7 +66,7 @@ const CreatePage = () => {
       toast.error("Can't find GitHub repository !!");
       setIsPending(false);
       return;
-    }
+    }*/
 
     createProject.mutate(
       {

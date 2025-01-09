@@ -13,7 +13,6 @@ export const projectRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      //await checkValidRepo(input.githubUrl,input.githubToken)
       const project = await ctx.db.project.create({
         data: {
           githubUrl: input.githubUrl,
