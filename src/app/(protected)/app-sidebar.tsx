@@ -33,7 +33,7 @@ export function AppSidebar() {
     localStorage.getItem("createProjectPending") === "true"
   );
 
-  React.useEffect(() => {
+  /*React.useEffect(() => {
     const handleStorageChange = () => {
       setIsDisabled(localStorage.getItem("createProjectPending") === "true");
     };
@@ -43,7 +43,7 @@ export function AppSidebar() {
     return () => {
       window.removeEventListener("projectPendingChanged", handleStorageChange);
     };
-  }, []);
+  }, []);*/
 
   const items = [
     {
