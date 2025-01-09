@@ -68,7 +68,7 @@ export function AppSidebar() {
   ];
 
   return (
-    <Sidebar collapsible="icon" variant="floating" >
+    <Sidebar collapsible="icon" variant="floating" className={isDisabled ? "pointer-events-none opacity-50" : ""}>
       <SidebarContent className="rounded-md bg-gray-800 text-white">
         {open && (
           <SidebarHeader className="flex flex-row items-center justify-center">
