@@ -24,24 +24,21 @@ const CreatePage = () => {
 
   // On mount, set isPending from localStorage
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const pendingState =
-        localStorage.getItem("createProjectPending") === "true";
-      setIsPending(pendingState);
-    }
+    const pendingState =
+      localStorage.getItem("createProjectPending") === "true";
+    setIsPending(pendingState);
+
     // Optionally refetch to confirm operation is still pending (if API supports it)
   }, []);
 
   // Watch `isPending` state to update localStorage
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      if (isPending) {
-        localStorage.setItem("createProjectPending", "true");
-        window.dispatchEvent(new Event("projectPendingChanged"));
-      } else {
-        localStorage.removeItem("createProjectPending");
-        window.dispatchEvent(new Event("projectPendingChanged"));
-      }
+    if (isPending) {
+      localStorage.setItem("createProjectPending", "true");
+      //window.dispatchEvent(new Event("projectPendingChanged"));
+    } else {
+      localStorage.removeItem("createProjectPending");
+      //window.dispatchEvent(new Event("projectPendingChanged"));
     }
   }, [isPending]);
 
@@ -57,7 +54,7 @@ const CreatePage = () => {
     }
 
     setIsPending(true);
-    const privRepo = await checkPrivate(data.repoUrl, data.githubToken);
+    const privRepo=await checkPrivate(data.repoUrl,data.githubToken)
     if (privRepo) {
       toast.error("Can't link private repository !!");
       setIsPending(false);
