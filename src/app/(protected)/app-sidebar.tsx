@@ -29,11 +29,11 @@ export function AppSidebar() {
   const { projects, projectId, setProjectId } = useProject();
   const router = useRouter();
 
-  const [isDisabled, setIsDisabled] = React.useState(
+  /*const [isDisabled, setIsDisabled] = React.useState(
     localStorage.getItem("createProjectPending") === "true"
   );
 
-  /*React.useEffect(() => {
+  React.useEffect(() => {
     const handleStorageChange = () => {
       setIsDisabled(localStorage.getItem("createProjectPending") === "true");
     };
@@ -59,7 +59,7 @@ export function AppSidebar() {
   ];
 
   return (
-    <Sidebar collapsible="icon" variant="floating" className={isDisabled ? "pointer-events-none opacity-50" : ""}>
+    <Sidebar collapsible="icon" variant="floating" >
       <SidebarContent className="rounded-md bg-gray-800 text-white">
         {open && (
           <SidebarHeader className="flex flex-row items-center justify-center">
