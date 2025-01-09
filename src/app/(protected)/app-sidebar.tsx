@@ -34,16 +34,23 @@ export function AppSidebar() {
   );
 
   React.useEffect(() => {
-    const handleStorageChange = () => {
-      setIsDisabled(localStorage.getItem("createProjectPending") === "true");
-    };
+    if (typeof window !== 'undefined') {
+      const handleStorageChange = () => {
+        try {
+          setIsDisabled(localStorage.getItem("createProjectPending") === "true");
+        } catch (error) {
+          console.error("localStorage error:", error);
+          setIsDisabled(false);
+        }
+      };
 
-    window.addEventListener("projectPendingChanged", handleStorageChange);
-  
-    return () => {
-      window.removeEventListener("projectPendingChanged", handleStorageChange);
-    };
-  }, [window.addEventListener]);
+      window.addEventListener("projectPendingChanged", handleStorageChange);
+
+      return () => {
+        window.removeEventListener("projectPendingChanged", handleStorageChange);
+      };
+    }
+  }, []);
 
   const items = [
     {
