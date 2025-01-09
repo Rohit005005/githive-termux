@@ -21,7 +21,6 @@ export const loadGithubRepo = async (
     maxConcurrency: 5,
   });
   const docs = await loader.load();
-  console.log("docs info : ", docs);
   return docs;
 };
 

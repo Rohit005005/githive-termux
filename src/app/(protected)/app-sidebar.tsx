@@ -38,10 +38,10 @@ export function AppSidebar() {
       setIsDisabled(localStorage.getItem("createProjectPending") === "true");
     };
 
-    window.addEventListener("projectPendingChanged", handleStorageChange);
+    //window.addEventListener("projectPendingChanged", handleStorageChange);
   
     return () => {
-      window.removeEventListener("projectPendingChanged", handleStorageChange);
+      //window.removeEventListener("projectPendingChanged", handleStorageChange);
     };
   }, []);
 
