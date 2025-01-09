@@ -7,7 +7,6 @@ import { Info, LoaderIcon } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { checkPrivate, checkValidRepo } from "../dashboard/actions";
 
 type FormInput = {
   repoUrl: string;
@@ -24,8 +23,7 @@ const CreatePage = () => {
 
   // On mount, set isPending from localStorage
   useEffect(() => {
-    const pendingState =
-      localStorage.getItem("createProjectPending") === "true";
+    const pendingState = localStorage.getItem("createProjectPending") === "true";
     setIsPending(pendingState);
 
     // Optionally refetch to confirm operation is still pending (if API supports it)
@@ -35,14 +33,12 @@ const CreatePage = () => {
   useEffect(() => {
     if (isPending) {
       localStorage.setItem("createProjectPending", "true");
-      window.dispatchEvent(new Event("projectPendingChanged"));
     } else {
       localStorage.removeItem("createProjectPending");
-      window.dispatchEvent(new Event("projectPendingChanged"));
     }
   }, [isPending]);
 
-  async function onSubmit(data: FormInput) {
+  function onSubmit(data: FormInput) {
     const githubRegex = /^https?:\/\/(www\.)?github\.com\/[\w-]+\/[\w-]+\/?$/;
     if (data.repoUrl.endsWith(".git")) {
       toast.error(`Remove ".git" from the end of the URL !!`);
@@ -54,19 +50,6 @@ const CreatePage = () => {
     }
 
     setIsPending(true);
-    /*const privRepo=await checkPrivate(data.repoUrl,data.githubToken)
-    if (privRepo) {
-      toast.error("Can't link private repository !!");
-      setIsPending(false);
-      return;
-    }
-
-    const validRepo = await checkValidRepo(data.repoUrl, data.githubToken);
-    if (!validRepo) {
-      toast.error("Can't find GitHub repository !!");
-      setIsPending(false);
-      return;
-    }*/
 
     createProject.mutate(
       {
@@ -85,7 +68,7 @@ const CreatePage = () => {
           toast.error("Failed to create project");
           setIsPending(false);
         },
-      },
+      }
     );
   }
 
