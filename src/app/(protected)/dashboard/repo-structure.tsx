@@ -5,6 +5,7 @@ import MDEditor from "@uiw/react-md-editor";
 import React, { useEffect } from "react";
 import { repoStructure } from "./actions";
 import { LoaderIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const RepoStructureCard = () => {
   const { project } = useProject();
@@ -14,6 +15,10 @@ const RepoStructureCard = () => {
   useEffect(() => {
     const structureRepo = async () => {
       if (!project?.id) return;
+      if (project.structure) {
+        setStructure(project.structure);
+        return;
+      }
       setLoading(true);
       const response = await repoStructure(project.id);
       setStructure(response || "");
@@ -21,6 +26,14 @@ const RepoStructureCard = () => {
     };
     structureRepo();
   }, [project?.id]);
+
+  const regenStructure = async () => {
+    setStructure("");
+    setLoading(true);
+    const response = await repoStructure(project!.id);
+    setStructure(response || "");
+    setLoading(false);
+  };
 
   return (
     <>
@@ -32,10 +45,15 @@ const RepoStructureCard = () => {
       ) : (
         <Card className="relative border-gray-600 bg-gray-800 text-white sm:p-2">
           <CardContent>
-            <MDEditor.Markdown
-              source={structure}
-              className="rounded-md p-5"
-            />
+            <MDEditor.Markdown source={structure} className="rounded-md p-5" />
+            <Button
+              className="mt-5 text-sm"
+              onClick={() => {
+                regenStructure();
+              }}
+            >
+              Regenerate
+            </Button>
           </CardContent>
         </Card>
       )}

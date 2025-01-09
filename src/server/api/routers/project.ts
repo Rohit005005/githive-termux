@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { pollCommits } from "@/lib/github";
-import { checkValidRepo, indexGithubRepo } from "@/lib/github-loader";
+import {  indexGithubRepo } from "@/lib/github-loader";
 
 export const projectRouter = createTRPCRouter({
   createProject: protectedProcedure
@@ -13,7 +13,7 @@ export const projectRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      await checkValidRepo(input.githubUrl,input.githubToken)
+      //await checkValidRepo(input.githubUrl,input.githubToken)
       const project = await ctx.db.project.create({
         data: {
           githubUrl: input.githubUrl,

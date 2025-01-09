@@ -45,6 +45,7 @@ export const aiSummarizeCommit = async (diff: string) => {
   });
 };
 
+
 export async function summarizeCode(doc: Document) {
   try {
     const code = doc.pageContent.slice(0, 10000);

@@ -6,6 +6,7 @@ import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { generateEmbedding } from "@/lib/gemini";
 import { db } from "@/server/db";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GithubRepoLoader } from "@langchain/community/document_loaders/web/github";
 
 const google = createGoogleGenerativeAI({
   apiKey: process.env.GEMINI_API_KEY,
@@ -17,7 +18,7 @@ export async function askQuestion(question: string, projectId: string) {
   const queryVector = await generateEmbedding(question);
   const vectorQuery = `[${queryVector.join(",")}]`;
 
-  const result = await db.$queryRaw`
+  const result = (await db.$queryRaw`
     SELECT "fileName","sourceCode","summary",
     1 - ("summaryEmbedding" <=> ${vectorQuery}::vector) AS similarity
     FROM "SourceCodeEmbedding"
@@ -25,7 +26,7 @@ export async function askQuestion(question: string, projectId: string) {
     AND "projectId" = ${projectId}
     ORDER BY similarity DESC
     LIMIT 10
-    ` as { fileName: string; sourceCode: string; summary: string }[];
+    `) as { fileName: string; sourceCode: string; summary: string }[];
 
   let context = "";
 
@@ -106,23 +107,21 @@ export async function summarizeRepo(projectId: string) {
   }
 }
 
-
-
-export async function repoStructure(projectId:string){
-  try{
+export async function repoStructure(projectId: string) {
+  try {
     const result = (await db.$queryRaw`
       SELECT "fileName"
       FROM "SourceCodeEmbedding"
       WHERE "projectId" = ${projectId}
-      `) as { fileName: string; }[];
-  
-      let context = "";
-  
-      for (const doc of result) {
-        context += `source: ${doc.fileName}\n `;
-      }
-      const response = await model.generateContent([
-        `You are an intelligent senior software engineer who specialises in reading github repositories.
+      `) as { fileName: string }[];
+
+    let context = "";
+
+    for (const doc of result) {
+      context += `source: ${doc.fileName}\n `;
+    }
+    const response = await model.generateContent([
+      `You are an intelligent senior software engineer who specialises in reading github repositories.
       You are looking at the files of a github repository and trying to identify their structure(which file is under which folder).
       Each file name provided below starts with \`source:\`.
       Give the proper structure of the repository by looking at the files.
@@ -131,12 +130,64 @@ export async function repoStructure(projectId:string){
       ${context}
       ---
       Provide a structure of the repository, in proper markdown.`,
-      ]);
-      const text = response.response.text();
-      return text;
-  }
-  catch(error){
+    ]);
+    const text = response.response.text();
+    await db.$queryRaw`
+      UPDATE "Project"
+      SET "structure" = ${text}
+      WHERE "id" = ${projectId}
+    `;
+    return text;
+  } catch (error) {
     console.log("error getting repo structure: ", error);
   }
 }
 
+export const checkPrivate = async (githubUrl: string, githubToken?: string) => {
+  try {
+    const [owner, repo] = githubUrl.split("/").slice(-2);
+    const apiUrl = `https://api.github.com/repos/${owner}/${repo}`;
+    const response = await fetch(apiUrl, {
+      headers: {
+        Authorization: `Bearer ${githubToken || process.env.GITHUB_TOKEN}`,
+      },
+    });
+    const repoData = await response.json();
+
+    if (repoData.private) {
+      console.log("The repository is private.");
+      return true
+    } else {
+      console.log("The repository is public.");
+      return false
+    }
+  } catch (error) {
+    console.log("error checking private repo: ", error);
+  }
+};
+
+export const checkValidRepo = async (
+  githubUrl: string,
+  githubToken?: string,
+) => {
+  try {
+    const loader = new GithubRepoLoader(githubUrl, {
+      accessToken: githubToken || process.env.GITHUB_TOKEN,
+      branch: "main",
+      ignoreFiles: [
+        "package-lock.json",
+        "yarn.lock",
+        "pnpm-lock.yaml",
+        "bun.lockb",
+      ],
+      recursive: true,
+      unknown: "warn",
+      maxConcurrency: 5,
+    });
+    await loader.load();
+    return true;
+  } catch (error) {
+    console.error(`Error validating GitHub repository: ${error}`);
+    return false;
+  }
+};

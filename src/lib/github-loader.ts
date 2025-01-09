@@ -1,4 +1,3 @@
-// github-loader.ts
 import { GithubRepoLoader } from "@langchain/community/document_loaders/web/github";
 import { Document } from "@langchain/core/documents";
 import { generateEmbedding, summarizeCode } from "./gemini";
@@ -110,29 +109,6 @@ async function generateEmbeddings(
   return results;
 }
 
-export const checkValidRepo = async (
-  githubUrl: string,
-  githubToken?: string,
-) => {
-  try {
-    const loader = new GithubRepoLoader(githubUrl, {
-      accessToken: githubToken || process.env.GITHUB_TOKEN,
-      branch: "main",
-      ignoreFiles: [
-        "package-lock.json",
-        "yarn.lock",
-        "pnpm-lock.yaml",
-        "bun.lockb",
-      ],
-      recursive: true,
-      unknown: "warn",
-      maxConcurrency: 5,
-    });
-    await loader.load();
-    return true;
-  } catch (error) {
-    throw new Error(`Error validating GitHub repository: ${error}`);
-  }
-};
+
 
 
