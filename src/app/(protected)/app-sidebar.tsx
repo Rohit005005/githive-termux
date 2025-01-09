@@ -29,28 +29,30 @@ export function AppSidebar() {
   const { projects, projectId, setProjectId } = useProject();
   const router = useRouter();
 
-  const [isDisabled, setIsDisabled] = React.useState(
-    localStorage.getItem("createProjectPending") === "true"
-  );
+  const [isMounted, setIsMounted] = React.useState(false);
+  const [isDisabled, setIsDisabled] = React.useState(false);
 
   React.useEffect(() => {
-    if (typeof window !== 'undefined') {
+    // Set isMounted to true after the component has mounted
+    setIsMounted(true);
+  }, []);
+
+  React.useEffect(() => {
+    if (isMounted && typeof window !== "undefined") {
+      const pending = localStorage.getItem("createProjectPending");
+      setIsDisabled(pending === "true");
+
       const handleStorageChange = () => {
-        try {
-          setIsDisabled(localStorage.getItem("createProjectPending") === "true");
-        } catch (error) {
-          console.error("localStorage error:", error);
-          setIsDisabled(false);
-        }
+        setIsDisabled(localStorage.getItem("createProjectPending") === "true");
       };
 
       window.addEventListener("projectPendingChanged", handleStorageChange);
-
+    
       return () => {
         window.removeEventListener("projectPendingChanged", handleStorageChange);
       };
     }
-  }, []);
+  }, [isMounted]); 
 
   const items = [
     {
