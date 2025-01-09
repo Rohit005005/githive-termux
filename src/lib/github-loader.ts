@@ -29,9 +29,12 @@ export const indexGithubRepo = async (
   githubUrl: string,
   githubToken?: string,
 ) => {
+  console.log("Starting GitHub repo indexing...");
   const docs = await loadGithubRepo(githubUrl, githubToken);
+  console.log(`Loaded ${docs.length} documents from repo`);
 
   const embeddings = await generateEmbeddings(docs);
+  console.log(`Generated embeddings for ${embeddings.length} documents`);
 
   let processedCount = 0;
   for (const embedding of embeddings) {
@@ -53,12 +56,15 @@ export const indexGithubRepo = async (
         WHERE "id" = ${sourceCodeEmbedding.id}`;
 
       processedCount++;
-      
+      console.log(
+        `Processed ${processedCount}/${embeddings.length} embeddings`,
+      );
     } catch (error) {
       console.error(`Error saving embedding for ${embedding.fileName}:`, error);
     }
   }
 
+  console.log("Finished indexing GitHub repo");
 };
 
 type EmbeddingResult = {
@@ -76,12 +82,15 @@ async function generateEmbeddings(
 
   for (const doc of docs) {
     try {
+      console.log(`Processing document: ${doc.metadata.source}`);
 
       // Get summary first
       const summary = await summarizeCode(doc);
+      console.log(`Generated summary for ${doc.metadata.source}`);
 
       // Then get embedding
       const embedding = await generateEmbedding(summary);
+      console.log(`Generated embedding for ${doc.metadata.source}`);
 
       results.push({
         embedding,
@@ -90,6 +99,7 @@ async function generateEmbeddings(
         fileName: doc.metadata.source,
       });
     } catch (error) {
+      console.error(`Error processing document: ${doc.metadata.source}`, error);
       console.error(error);
       results.push(null); // Push null for failed documents
     }
