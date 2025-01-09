@@ -29,7 +29,7 @@ export function AppSidebar() {
   const { projects, projectId, setProjectId } = useProject();
   const router = useRouter();
 
-  /*const [isDisabled, setIsDisabled] = React.useState(
+  const [isDisabled, setIsDisabled] = React.useState(
     localStorage.getItem("createProjectPending") === "true"
   );
 
@@ -43,7 +43,7 @@ export function AppSidebar() {
     return () => {
       window.removeEventListener("projectPendingChanged", handleStorageChange);
     };
-  }, []);*/
+  }, [window.addEventListener]);
 
   const items = [
     {
