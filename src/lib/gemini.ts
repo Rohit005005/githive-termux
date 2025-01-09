@@ -8,7 +8,6 @@ const model = genAI.getGenerativeModel({
 });
 
 export const aiSummarizeCommit = async (diff: string) => {
-  return geminiRateLimiter.schedule(async () => {
     const response = await model.generateContent([
       `You are an expert programmer, and you are trying to summarize a git diff.
         Reminders about the git diff format:
@@ -42,14 +41,12 @@ export const aiSummarizeCommit = async (diff: string) => {
         Please summarize the following diff file:\n\n${diff}`,
     ]);
     return response.response.text();
-  });
 };
 
 
 export async function summarizeCode(doc: Document) {
   try {
     const code = doc.pageContent.slice(0, 10000);
-    return geminiRateLimiter.schedule(async () => {
       const response = await model.generateContent([
         `You are an intelligent senior software engineer who specialises in onboarding junior software engineers onto projects.
         You are onboardig a junior software engineer and explaining to them the purpose of the ${doc.metadata.source} file.
@@ -61,7 +58,6 @@ export async function summarizeCode(doc: Document) {
         Give a summary no more than 100 words of the code above.`,
       ]);
       return response.response.text();
-    });
   } catch (error) {
     console.error(
       `Error summarizing document(gemini.ts): ${doc.metadata.source}`,
@@ -72,12 +68,10 @@ export async function summarizeCode(doc: Document) {
 }
 
 export async function generateEmbedding(summary: string) {
-  return geminiRateLimiter.schedule(async () => {
     const model = genAI.getGenerativeModel({
       model: "text-embedding-004",
     });
     const result = await model.embedContent(summary);
     return result.embedding.values;
-  });
 }
 
