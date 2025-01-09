@@ -21,12 +21,30 @@ import { cn } from "@/lib/utils";
 import { Bot, Github, LayoutDashboard, Linkedin, Plus } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import React from "react";
 
 export function AppSidebar() {
   const pathname = usePathname();
   const { open } = useSidebar();
   const { projects, projectId, setProjectId } = useProject();
   const router = useRouter();
+
+  const [isDisabled, setIsDisabled] = React.useState(
+    localStorage.getItem("createProjectPending") === "true"
+  );
+
+  React.useEffect(() => {
+    const handleStorageChange = () => {
+      setIsDisabled(localStorage.getItem("createProjectPending") === "true");
+    };
+
+    window.addEventListener("projectPendingChanged", handleStorageChange);
+  
+    return () => {
+      window.removeEventListener("projectPendingChanged", handleStorageChange);
+    };
+  }, []);
+
   const items = [
     {
       title: "Dashboard",
@@ -41,7 +59,7 @@ export function AppSidebar() {
   ];
 
   return (
-    <Sidebar collapsible="icon" variant="floating">
+    <Sidebar collapsible="icon" variant="floating" className={isDisabled ? "pointer-events-none opacity-50" : ""}>
       <SidebarContent className="rounded-md bg-gray-800 text-white">
         {open && (
           <SidebarHeader className="flex flex-row items-center justify-center">
